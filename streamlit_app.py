@@ -16,6 +16,10 @@ st.write("The name on your Smoothie will be:", name_on_order)
 
 # Get fruit options from Snowflake
 my_dataframe = session.table("SMOOTHIES.PUBLIC.FRUIT_OPTIONS")
+fruit_lookup = {
+    row["FRUIT_NAME"]: row["SEARCH_ON"]
+    for row in my_dataframe.select("FRUIT_NAME", "SEARCH_ON").collect()
+}
 fruit_names = my_dataframe.select(col("FRUIT_NAME")).to_pandas()["FRUIT_NAME"].tolist()
 
 # Allow customers to select multiple fruits
@@ -32,13 +36,8 @@ if selected_fruits:
         # Add fruit to the order
         ingredients_string += fruit_chosen + " "
 
-        # Format fruit name for the SmoothieFroot API
-        fruit_for_api = fruit_chosen.lower().replace(" ", "")
-
-        # Fix the Apples naming difference
-        if fruit_for_api == "apples":
-            fruit_for_api = "apple"
-
+     # Get the API search name from Snowflake
+fruit_for_api = fruit_lookup[fruit_chosen]
         # Get nutrition information for this fruit
         smoothiefroot_response = requests.get(
             "https://my.smoothiefroot.com/api/fruit/" + fruit_for_api,
