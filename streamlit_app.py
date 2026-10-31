@@ -26,8 +26,8 @@ selected_fruits = st.multiselect(
 )
 
 # Process smoothie order
-if selected_fruits:
-    ingredients_string = ""
+for fruit_chosen in selected_fruits:
+    ingredients_string += fruit_chosen + " "
     smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
     sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
