@@ -17,6 +17,8 @@ st.write("The name on your Smoothie will be:", name_on_order)
 
 # Get fruit options from Snowflake
 my_dataframe = session.table("SMOOTHIES.PUBLIC.FRUIT_OPTIONS")
+# Convert the Snowflake DataFrame into a Pandas DataFrame
+pd_df = my_dataframe.select("FRUIT_NAME", "SEARCH_ON").to_pandas()
 
 # Create a lookup between fruit names and API search names
 fruit_lookup = {
