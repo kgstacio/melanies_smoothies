@@ -20,11 +20,6 @@ my_dataframe = session.table("SMOOTHIES.PUBLIC.FRUIT_OPTIONS")
 # Convert the Snowflake DataFrame into a Pandas DataFrame
 pd_df = my_dataframe.select("FRUIT_NAME", "SEARCH_ON").to_pandas()
 
-# Create a lookup between fruit names and API search names
-fruit_lookup = {
-    row["FRUIT_NAME"]: row["SEARCH_ON"]
-    for row in my_dataframe.select("FRUIT_NAME", "SEARCH_ON").collect()
-}
 
 # Get fruit names for the dropdown
 fruit_names = my_dataframe.select(col("FRUIT_NAME")).to_pandas()["FRUIT_NAME"].tolist()
