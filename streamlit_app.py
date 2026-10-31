@@ -1,4 +1,3 @@
-
 import streamlit as st
 from snowflake.snowpark.functions import col
 import requests
@@ -30,17 +29,34 @@ if selected_fruits:
     ingredients_string = ""
 
     for fruit_chosen in selected_fruits:
+        # Add fruit to the order
         ingredients_string += fruit_chosen + " "
+
+        # Format fruit name for the SmoothieFroot API
         fruit_for_api = fruit_chosen.lower().replace(" ", "")
+
+        # Fix the Apples naming difference
         if fruit_for_api == "apples":
-        fruit_for_api = "apple"
+            fruit_for_api = "apple"
 
-        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_for_api)
-        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+        # Get nutrition information for this fruit
+        smoothiefroot_response = requests.get(
+            "https://my.smoothiefroot.com/api/fruit/" + fruit_for_api,
+            timeout=15
+        )
 
-    for fruit_chosen in selected_fruits:
-        ingredients_string += fruit_chosen + " "
+        # Display nutrition information
+        if smoothiefroot_response.ok:
+            st.dataframe(
+                data=smoothiefroot_response.json(),
+                use_container_width=True
+            )
+        else:
+            st.warning(
+                f"Nutrition information is unavailable for {fruit_chosen}."
+            )
 
+    # Display selected ingredients once
     st.write(ingredients_string)
 
     # Create SQL insert statement
@@ -60,3 +76,4 @@ if selected_fruits:
         ).collect()
 
         st.success("Your Smoothie is ordered!", icon="✅")
+
