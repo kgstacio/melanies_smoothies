@@ -44,7 +44,8 @@ if selected_fruits:
         ingredients_string += fruit_chosen + " "
 
         # Get the API search name from Snowflake
-        fruit_for_api = fruit_lookup[fruit_chosen]
+        search_on = pd_df.loc[pd_df["FRUIT_NAME"] == fruit_chosen, "SEARCH_ON"].iloc[0]
+        fruit_for_api = search_on
 
         # Get nutrition information for this fruit
         smoothiefroot_response = requests.get(
