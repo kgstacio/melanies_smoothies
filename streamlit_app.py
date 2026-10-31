@@ -1,6 +1,7 @@
 
 import streamlit as st
 from snowflake.snowpark.functions import col
+import requests
 
 # Connect to Snowflake
 cnx = st.connection("snowflake")
@@ -27,6 +28,8 @@ selected_fruits = st.multiselect(
 # Process smoothie order
 if selected_fruits:
     ingredients_string = ""
+    smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+    sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
     for fruit_chosen in selected_fruits:
         ingredients_string += fruit_chosen + " "
@@ -50,9 +53,3 @@ if selected_fruits:
         ).collect()
 
         st.success("Your Smoothie is ordered!", icon="✅")
-        # New section to display SmoothieFroot nutrition information
-import requests
-
-smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
-# st.text(smoothiefroot_response.json())
-sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
